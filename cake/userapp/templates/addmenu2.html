@@ -1,0 +1,145 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hompakhomkor.com</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+        }
+        /* about */
+        #about{
+          min-height: 200px;
+          position: relative;
+          color: #FFFFFF;
+          background-color: #CEB09D;
+          text-align: center;
+        }
+
+      </style>
+</head>
+<body>
+
+    <!-- navbar ด้านบน -->
+    {% include 'adminsidebar.html' %}
+
+
+    <section id="addmenu2">
+        <div style="max-width: 500px; background: #fff; padding: 20px; border-radius: 8px; margin: 50px auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+    
+            <h2 class="fw-bold custom-fontTH" style="text-align: center; margin-bottom: 20px; color: #AC8662;">เพิ่มเมนู</h2>
+    
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+    
+                <!-- ชื่อเมนู -->
+                <label for="name" class="fw-bold custom-fontTH" style="color: #AC8662;">ชื่อเมนู</label>
+                <input type="text" id="name" name="name"
+                    style="width: 100%; padding: 8px 10px; margin-bottom: 15px; border: 1px solid #AC8662; border-radius: 5px; font-size: 14px; background: #fafafa;" required>
+    
+                <!-- รายละเอียดเค้ก -->
+                <label for="description" class="fw-bold custom-fontTH" style="color: #AC8662;">รายละเอียดเค้ก</label>
+                <textarea id="description" name="description"
+                    style="width: 100%; padding: 8px 10px; margin-bottom: 15px; border: 1px solid #AC8662; border-radius: 5px; font-size: 14px; background: #fafafa; resize: vertical; min-height: 80px;" required></textarea>
+    
+                <!-- ราคาต่างๆ -->
+                <label for="price1" class="fw-bold custom-fontTH" style="color: #AC8662;">ราคาเค้ก 1 ปอนด์</label>
+                <input type="text" id="price1" name="price1"
+                    style="width: 100%; padding: 8px 10px; margin-bottom: 15px; border: 1px solid #AC8662; border-radius: 5px; font-size: 14px; background: #fafafa;" required>
+    
+                <label for="price2" class="fw-bold custom-fontTH" style="color: #AC8662;">ราคาเค้ก 2 ปอนด์</label>
+                <input type="text" id="price2" name="price2"
+                    style="width: 100%; padding: 8px 10px; margin-bottom: 15px; border: 1px solid #AC8662; border-radius: 5px; font-size: 14px; background: #fafafa;" required>
+    
+                <label for="price3" class="fw-bold custom-fontTH" style="color: #AC8662;">ราคาเค้ก 3 ปอนด์</label>
+                <input type="text" id="price3" name="price3"
+                    style="width: 100%; padding: 8px 10px; margin-bottom: 15px; border: 1px solid #AC8662; border-radius: 5px; font-size: 14px; background: #fafafa;" required>
+    
+                <!-- เมนูขายดี -->
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="isTrending" name="isTrending" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="isTrending" class="custom-fontTH" style="color: #AC8662;">เมนูขายดี</label>
+                    </div>
+                </div>
+    
+                <!-- ส่วนผสมที่อาจก่อให้เกิดการแพ้ -->
+                <label class="fw-bold custom-fontTH" style="color: #AC8662;">ส่วนผสมที่อาจก่อให้เกิดการแพ้</label>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havDough" name="havDough" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havDough" class="custom-fontTH" style="color: #AC8662;">แป้งสาลี</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havMilk" name="havMilk" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havMilk" class="custom-fontTH" style="color: #AC8662;">นม</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havRedegg" name="havRedegg" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havRedegg" class="custom-fontTH" style="color: #AC8662;">ไข่แดง</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havWhiteegg" name="havWhiteegg" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havWhiteegg" class="custom-fontTH" style="color: #AC8662;">ไข่ขาว</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havButter" name="havButter" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havButter" class="custom-fontTH" style="color: #AC8662;">เนย</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havBakpow" name="havBakpow" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havBakpow" class="custom-fontTH" style="color: #AC8662;">ผงฟู</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havVanilla" name="havVanilla" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havVanilla" class="custom-fontTH" style="color: #AC8662;">วานิลลา</label>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="havNut" name="havNut" style="margin-right: 8px; accent-color: #AC8662;">
+                        <label for="havNut" class="custom-fontTH" style="color: #AC8662;">ถั่ว</label>
+                    </div>
+                </div>
+    
+                <!-- รูปภาพ -->
+                <label class="fw-bold custom-fontTH" style="color: #AC8662;">รูปสินค้า</label>
+                <input type="file" id="imageUpload" name="imageUpload"
+                    style="width: 100%; padding: 8px 10px; margin-bottom: 20px; background: #fafafa;">
+    
+                <button type="submit" class="custom-fontTH" style="width: 100%; padding: 10px; background-color: #AC8662; color: white; border: none; border-radius: 10px; cursor: pointer;">บันทึก</button>
+            </form>
+        </div>
+    </section>
+    
+
+    <!--about-->
+    {% include 'abouts.html' %}
+
+</body>
+</html>

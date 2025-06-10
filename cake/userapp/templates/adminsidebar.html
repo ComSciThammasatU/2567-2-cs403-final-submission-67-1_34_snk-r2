@@ -1,0 +1,58 @@
+{% load static %}
+
+    <!--navbar1-->
+    <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: #CEB09D;">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img class="p-3" src="{% static 'immage/โลโก้หอมปากหอมคอ.png' %}" alt="" width="113" height="113">
+          </a>
+          <p class="navbar-brand">
+            <span class="fw-light custom-fontEG " style="font-size: 2rem; padding-left: 43px;">Hompak Homkor</span><br>
+            <span class="fw-light custom-fontEG2 " style="font-size: 1.5rem; padding-left: 60px;">Bakery Homemade</span>
+        </p>
+          <!--menu-->
+          <ul class="navbar-nav">
+            <li class="nav-item me-2">
+                    <p style="color: #FFFFFF;">👋 {{ user.first_name }}{% if user.is_superuser %} (Admin){% endif %}</p>
+            </li>
+            <li class="nav-item me-2" style="color: #FFFFFF;">
+                <p>|</p>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'logout' %}" class="navbar-link position-relative" style="color: #FFFFFF; padding-right: 30px;">
+                <p>Logout</p>
+              </a>
+          </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- navbar2 -->
+    <nav class="navbar navbar-expand-sm navbar-dark custom-navbar custom-navbarsize" style="background-color: #FFFFFF;">
+        <div class="container-fluid">
+            <!-- menu -->
+            <ul class="navbar-nav d-flex w-100">
+                <li class="nav-item me-3">
+                    <a href="/admin_dashboard" class="navbar-link" style="color: #AC8662; font-size: 20px; padding-left: 30px;">หน้าแรก</a>
+                </li>
+                <li class="nav-item me-3" style="color: #AC8662; font-size: 20px;">
+                    <p>|</p>
+                </li>
+                <li class="nav-item me-3">
+                    <a href="/admin_dashboard/edit-menu" class="navbar-link" style="color: #AC8662; font-size: 20px;">เพิ่มและแก้ไขเมนู</a>
+                </li>
+                <li class="nav-item me-3" style="color: #AC8662; font-size: 20px;">
+                    <p>|</p>
+                </li>
+                <li class="nav-item me-3">
+                    <a href="/admin_dashboard/manage_orders" class="navbar-link" style="color: #AC8662; font-size: 20px;">รายการสั่งซื้อ</a>
+                </li>
+                <li class="nav-item me-3" style="color: #AC8662; font-size: 20px;">
+                    <p>|</p>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin_dashboard/sales" class="navbar-link" style="color: #AC8662; font-size: 20px;">สรุปยอดการขาย</a>
+                </li>
+            </ul>
+        </div>
+    </nav>

@@ -1,0 +1,174 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติคำสั่งซื้อ | HomPak HomKor</title>
+
+    <!-- โหลด Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+    
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+        }
+        /* รูปหน้าหลักคาเฟ่ */
+        #imagetext{
+            min-height: 1250px;
+            position: relative;
+            background-image: url({% static 'immage/วอลเปเปอร์.jpg' %});
+            background-size: cover;
+            background-repeat: no-repeat;
+            text-align: center;
+            color: #AC8662;
+        }
+        .order-box {
+            background: #fdf9f2;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .order-item {
+            margin-bottom: 20px;
+        }
+
+        .order-status {
+            color: #AC8662;
+            font-weight: bold;
+        }
+
+        .status-paid{
+            color: orange;
+        }
+
+        .status-success {
+            color: lightgreen;
+        }
+
+        .status-cancelled {
+            color: red;
+        }
+        #about{
+            min-height: 200px;
+            position: relative;
+            color: #FFFFFF;
+            background-color: #CEB09D;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+{% include 'homesidebar.html' %}
+
+<section id="my-orders">
+    <div class="container py-5">
+        <h2 class="mb-4 fw-bold custom-fontTH" style="color: #AC8662;">คำสั่งซื้อของฉัน</h2>
+
+        {% if request.GET.success == 'true' %}
+        <div class="alert alert-success">
+            ✅ ความคิดเห็นของคุณถูกส่งเรียบร้อยแล้ว
+        </div>
+        {% endif %}
+
+        {% if orders %}
+            {% for order in orders %}
+            <div class="order-box">
+                {% for item in order.orderitem_set.all %}
+                <div class="row align-items-center order-item">
+                    <div class="col-2">
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-fluid rounded">
+                    </div>
+                    <div class="col-6 custom-fontTH">
+                        <h5 style="color: #AC8662;">{{ item.product.name }}</h5>
+                        <p style="color: #AC8662; margin-bottom: 0;">
+                            {% if item.message %}คำขอพิเศษ: {{ item.message }}{% endif %}
+                        </p>
+                        <p style="color: #AC8662;">ขนาด (ปอนด์): {{ item.size }}</p>
+                    </div>
+                    <div class="col-2 text-center custom-fontTH">
+                        <p style="color: #AC8662;">{{ item.quantity }}</p>
+                    </div>
+                    <div class="col-2 text-end custom-fontTH">
+                        <p style="color: #AC8662;">{{ item.total_price|floatformat:0 }} บ.</p>
+                    </div>
+
+                    {% if order.status == 'shipped' %}
+                    <div class="text-end mt-2">
+                        <button onclick="openCommentModal({{ item.product.id }})"
+                                class="btn btn-link p-0 fw-bold custom-fontTH" style="color: #AC8662; text-decoration: underline;">
+                             แสดงความคิดเห็น
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="mt-3 text-end">
+                    <p class="order-status fw-bold custom-fontTH"">
+                        รวมทั้งหมด: {{ order.total_price|intcomma }} บ.
+                    </p>
+                    <p class="order-status fw-bold custom-fontTH"">
+                        สถานะ:
+                        {% if order.status == 'pending' %}
+                            <span class="text-warning">รอยืนยันการชำระเงิน</span>
+                        {% elif order.status == 'paid' %}
+                            <span style="status-paid">กำลังเตรียมสินค้า</span>
+                        {% elif order.status == 'shipped' %}
+                            <span class="status-success">สำเร็จแล้ว</span>
+                        {% elif order.status == 'cancelled' %}
+                            <span class="status-cancelled">ถูกยกเลิก</span>
+                        {% else %}
+                            {{ order.status }}
+                        {% endif %}
+                    </p>
+                    {% if order.status == 'cancelled' and order.cancel_reason %}
+                    <p class="text-danger fw-bold custom-fontTH"">
+                        เหตุผล: {{ order.cancel_reason }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">ยังไม่มีคำสั่งซื้อ</p>
+        {% endif %}
+
+    </div>
+</section>
+
+{% include 'comment_modal.html' %}
+
+{% include 'abouts.html' %}
+
+</body>
+</html>

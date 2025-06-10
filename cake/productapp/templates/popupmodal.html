@@ -1,0 +1,195 @@
+
+{% load static %}
+
+<!-- Login Modal -->
+<section id="login">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4" style="border-radius: 20px;">
+          <div class="modal-header border-0">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title w-100 d-flex justify-content-center" id="loginModalLabel">
+              <img src="{% static 'immage/loginjaa.png' %}" alt="เข้าสู่ระบบ" style="width: 150px;">
+            </h5>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm" method="post" action="{% url 'login' %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <input type="text" name="phone" class="form-control custom-input custom-fontTH" placeholder="หมายเลขโทรศัพท์" required>
+              </div>
+              <div class="mb-3">
+                <input type="password" name="password" class="form-control custom-input custom-fontTH" placeholder="รหัสผ่าน" required>
+              </div>
+              <div id="login-error" class="text-danger text-center mt-2"></div>
+              <button type="submit" class="btn btn-primary w-100 rounded-pill custom-fontTH" style="background: #CEB09D; border: none;">เข้าสู่ระบบ</button>
+            </form>
+            <div class="text-center mt-3">
+              <span class="custom-text custom-fontTH">ยังไม่มีบัญชี ? </span> 
+              <a href="#" id="registerLink" class="custom-text custom-fontTH" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">สมัครสมาชิก</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- Register Modal -->
+<section id="register">
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-4" style="border-radius: 20px;">
+        <div class="modal-header border-0">
+          <button type="button" class="btn-close position-absolute top-0 end-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title w-100 d-flex justify-content-center" id="registerModalLabel">
+            <img src="{% static 'immage/ลงทะเบียน.png' %}" alt="สมัครสมาชิก" style="width: 150px;">
+          </h5>
+        </div>
+        <div class="modal-body">
+          <form id="registerForm" method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <input type="text" name="first_name" class="form-control custom-input custom-fontTH" placeholder="ชื่อ" required>
+            </div>
+            <div class="mb-3">
+              <input type="text" name="last_name" class="form-control custom-input custom-fontTH" placeholder="นามสกุล" required>
+            </div>
+            <div class="mb-3">
+              <input type="tel" name="phone" class="form-control custom-input custom-fontTH" placeholder="หมายเลขโทรศัพท์ 10 หลัก" required>
+            </div>
+            <div class="mb-3">
+              <input type="password" name="password" class="form-control custom-input custom-fontTH" placeholder="รหัสผ่าน" required>
+            </div>
+            <div class="mb-3">
+              <input type="password" name="confirm_password" class="form-control custom-input custom-fontTH" placeholder="ยืนยันรหัสผ่าน" required>
+            </div>
+            <button type="submit" id="registerSubmitBtn" class="btn btn-primary w-100 rounded-pill custom-fontTH" style="background: #CEB09D; border: none;">ลงทะเบียน</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OTP Modal -->
+<section id="otp">
+  <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-4 text-center">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-body">
+          <img src="{% static 'immage/โลโก้หอมปากหอมคอ2.png' %}" alt="HomPak HomKor" class="mb-3" width="100">
+          <h5 class="fw-bold custom-fontTH custom-text">ยืนยันรหัส OTP</h5>
+          <p class="text-muted custom-fontTH custom-text">รหัส OTP จะถูกส่งไปยังเบอร์โทรศัพท์ของคุณ</p>
+          <p class="fw-bold custom-fontTH custom-text">กรอกรหัส OTP ที่ได้รับ</p>
+          <form id="otpForm" method="post" action="{% url 'verify_otp' %}">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center gap-2">
+              <input type="text" name="otp" maxlength="6" class="form-control text-center custom-fontTH custom-text" style="width: 150px;" required>
+            </div>
+            <div id="otp-error" class="text-danger text-center mt-2">OTP ไม่ถูกต้อง</div>
+            <button type="submit" class="btn mt-3 w-100 rounded-pill custom-fontTH" style="color: #FFFFFF; background: #CEB09D; border: none;">ยืนยันรหัส</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const registerForm = document.getElementById("registerForm");
+      registerForm.addEventListener("submit", function(event) {
+          event.preventDefault(); // หยุดไม่ให้ form reload หน้า
+  
+          const formData = new FormData(registerForm);
+  
+          fetch("{% url 'register' %}", {
+              method: "POST",
+              body: formData,
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest", // บอก Django ว่า AJAX นะ
+              },
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // ปิด register modal ก่อน (optional)
+                  var registerModalEl = document.getElementById('registerModal');
+                  var registerModal = bootstrap.Modal.getInstance(registerModalEl);
+                  registerModal.hide();
+  
+                  // เปิด OTP modal
+                  var otpModalEl = document.getElementById('otpModal');
+                  var otpModal = new bootstrap.Modal(otpModalEl);
+                  otpModal.show();
+              } else {
+                  alert(data.error || "เกิดข้อผิดพลาด");
+              }
+          })
+          .catch(error => {
+              console.error("Error:", error);
+              alert("เกิดข้อผิดพลาด");
+          });
+      });
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(loginForm);
+
+        fetch("{% url 'login' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                location.reload(); // login สำเร็จ → reload หน้า
+            } else {
+                document.getElementById("login-error").innerText = data.error;
+            }
+        })
+        .catch((error) => {
+            console.error("Login error:", error);
+            document.getElementById("login-error").innerText = "เกิดข้อผิดพลาดขณะเข้าสู่ระบบ";
+        });
+    });
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const otpForm = document.getElementById("otpForm");
+
+    otpForm.addEventListener("submit", function (event) {
+        event.preventDefault();  //  ห้าม reload หน้า
+
+        const formData = new FormData(otpForm);
+
+        fetch("{% url 'verify_otp' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest", // บอก Django ว่านี่คือ AJAX
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                location.reload(); // OTP ถูก → reload หน้าใหม่
+            } else {
+                document.getElementById("otp-error").innerText = data.error;
+            }
+        })
+        .catch((error) => {
+            console.error("OTP error:", error);
+            document.getElementById("otp-error").innerText = "เกิดข้อผิดพลาดขณะยืนยันรหัส";
+        });
+    });
+});
+  </script>
+

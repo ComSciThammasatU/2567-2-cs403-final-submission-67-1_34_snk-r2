@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }}</title>
+    <!-- โหลด Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+        }
+        /* รูปหน้าหลักคาเฟ่ */
+        #imagetext{
+            min-height: 1250px;
+            position: relative;
+            background-image: url({% static 'immage/วอลเปเปอร์.jpg' %});
+            background-size: cover;
+            background-repeat: no-repeat;
+            text-align: center;
+            color: #AC8662;
+        }
+        /* about */
+        #about{
+          min-height: 200px;
+          position: relative;
+          color: #FFFFFF;
+          background-color: #CEB09D;
+          text-align: center;
+        }
+
+        /*ข้อความหน้าเค้ก*/
+        /* ปรับกรอบตอนปกติ */
+        #message {
+            border: 1px solid #AC8662;
+        }
+
+        /* ปรับตอน focus (เวลาคลิกหรือพิมพ์อยู่) */
+        #message:focus {
+            border-color: #AC8662;
+            box-shadow: 0 0 0 0.2rem rgba(172, 134, 98, 0.25);
+        }
+
+        #message::placeholder {
+            color: #AC8662;
+            opacity: 0.7; /* ให้แสดงชัด */
+        }
+
+
+        /*ปุ่มกดเลือกไซส์*/
+        .btn-outline-primary {
+            color: #AC8662;
+            border-color: #AC8662;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-check:checked + .btn-outline-primary,
+        .btn-outline-primary:active,
+        .btn-outline-primary.active,
+        .show > .btn-outline-primary.dropdown-toggle {
+            background-color: #AC8662;
+            color: white;
+            border-color: #AC8662;
+        }
+        .btn-primary {
+            background-color: #AC8662;
+            border-color: #AC8662;
+        }
+
+        .btn-primary:hover {
+            background-color: #926f52; /* เฉดเข้มขึ้นเล็กน้อยเวลา hover */
+            border-color: #926f52;
+        }
+
+        /* ปรับปุ่ม - และ + */
+        .btn-outline-secondary {
+            color: #AC8662;
+            border-color: #AC8662;
+            background-color: transparent;
+        }
+
+        .btn-outline-secondary:hover,
+        .btn-outline-secondary:active,
+        .btn-outline-secondary:focus {
+            background-color: #AC8662;
+            color: white; 
+            border-color: #AC8662;
+        }
+
+        /* ปรับกรอบช่อง input (จำนวน) */
+        #quantity {
+            border: 1px solid #AC8662;
+        }
+
+        /* ตอน focus */
+        #quantity:focus {
+            border-color: #AC8662;
+            box-shadow: 0 0 0 0.2rem rgba(172, 134, 98, 0.25);
+        }
+
+      </style>
+</head>
+<body>
+
+    <!-- navbar ด้านบน -->
+    {% include 'homesidebar.html' %}
+
+    <!--รายละเอียดเค้ก-->
+    <section id="details">
+        <div class="container py-4">
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h2 class="fw-bold custom-fontTH" style="color: #AC8662;">{{ product.name }}</h2>
+                        <p class="custom-fontTH" style="color: #AC8662;">{{ product.description }}</p>
+                        <p class="custom-fontTH" style="color: #AC8662;"><strong>ส่วนผสมที่อาจก่อให้เกิดการแพ้ * :</strong>
+                            {% if allergens %}
+                                {{ allergens|join:", " }}
+                            {% else %}
+                                ไม่มี
+                            {% endif %}
+                        </p>
+                        
+                        <form method="post" action="{% url 'add_to_cart' product.id %}">
+                            {% csrf_token %}
+                        
+                            <!-- ข้อความบนหน้าเค้ก -->
+                            <label for="message" class="form-label fw-bold custom-fontTH" style="color: #AC8662;">ข้อความบนหน้าเค้ก:</label>
+                            <input type="text" id="message" name="message" class="form-control fw-bold custom-fontTH" maxlength="30" placeholder="ระบุข้อความที่ต้องการ (สูงสุด 30 ตัวอักษร)">
+                            
+                            <!-- จำนวนก้อน -->
+                            <div class="my-3">
+                                <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">จำนวน (ก้อน):</label>
+                                <div class="input-group" style="max-width: 150px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(-1)">-</button>
+                                    <input type="text" id="quantity" name="quantity" class="form-control text-center" min="1" value="1" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="changeQuantity(1)">+</button>
+                                </div>
+                            </div>
+                        
+                            <!-- เลือกขนาด -->
+                            <div class="my-3">
+                                <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">ขนาด (ปอนด์):</label>
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="size" id="size1" value="1" autocomplete="off" checked>
+                                    <label class="btn btn-outline-primary" for="size1">1 ปอนด์ ({{ product.one_pound_price }} บ.)</label>
+                        
+                                    <input type="radio" class="btn-check" name="size" id="size2" value="2" autocomplete="off">
+                                    <label class="btn btn-outline-primary" for="size2">2 ปอนด์ ({{ product.two_pound_price }} บ.)</label>
+                        
+                                    <input type="radio" class="btn-check" name="size" id="size3" value="3" autocomplete="off">
+                                    <label class="btn btn-outline-primary" for="size3">3 ปอนด์ ({{ product.three_pound_price }} บ.)</label>
+                                </div>
+                            </div>
+                        
+                            <!-- ปุ่ม submit -->
+                            {% if request.user.is_authenticated %}
+                            <button type="submit" class="btn btn-primary w-100">สั่งซื้อ</button>
+                            {% else %}
+                            <button type="button" class="btn btn-primary w-100" onclick="alert('โปรดเข้าสู่ระบบก่อนเพิ่มสินค้า')" >สั่งซื้อ</button>
+                            {% endif %}
+                        </form>
+                        
+                        <!-- เพิ่มลดจำนวนก้อนเหมือนเดิม -->
+                        <script>
+                            function changeQuantity(amount) {
+                                const quantityInput = document.getElementById('quantity');
+                                let quantity = parseInt(quantityInput.value);
+                        
+                                quantity += amount;
+                                if (quantity < 1) {
+                                    quantity = 1;
+                                } else if (quantity > 10) {
+                                    quantity = 10;
+                                }
+                        
+                                quantityInput.value = quantity;
+                            }
+                        </script>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card p-4 mt-4">
+                <h4 class="fw-bold custom-fontTH" style="color: #AC8662;">คะแนน และความคิดเห็นสำหรับสินค้านี้</h4>
+                {% if comments %}
+                {% for comment in comments %}
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <strong class="custom-fontTH" style="color: #AC8662;">{{ comment.user.first_name }}</strong>
+                        <span class="custom-fontTH" style="font-size: 13px; color: #777;">⭐ {{ comment.rating }} / 5</span>
+                        <p class="custom-fontTH" style="color: #AC8662;">{{ comment.commenttext }}</p>
+
+                        {% if comment.reply %}
+                        <div class="mt-2 ms-3 p-2 rounded bg-light border" style="border-color: #AC8662;">
+                            <small class="text-muted custom-fontTH"><strong style="color: #AC8662;">หอมปาก หอมคอ (แชทบอท) :</strong> {{ comment.reply }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                {% endfor %}
+                {% else %}
+                <p>ยังไม่มีความคิดเห็นสำหรับสินค้านี้</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!--about-->
+    {% include 'abouts.html' %}
+
+</body>
+</html>

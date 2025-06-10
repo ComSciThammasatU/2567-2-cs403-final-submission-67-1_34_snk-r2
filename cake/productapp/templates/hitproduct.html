@@ -1,0 +1,42 @@
+{% load static %}  
+  
+      <!--imagetext-->
+      <section id="imagetext" class="p-5">
+        <div class="dark-overlay">
+          <div class="raw">
+            <div class="col">
+              <div class="container pt-5">
+                <img src="{% static 'immage/โลโก้หอมปากหอมคอ.png' %}" alt="" width="281" height="281">
+                <p class="fw-light custom-fontTH" style=" font-size: clamp(1.5rem, 5vw, 2rem); color: #AC8662; padding-left: 35px; padding-right: 35px; padding-top: 50px;">" หอมปากหอมคอ ร้านขนมที่มอบความอร่อยในทุกคำ เรารับทำเค้ก ขนมจัดเบรค และขนมหวานหลากหลายรูปแบบ ไม่ว่าจะเป็นเค้กสำหรับคาเฟ่ หรืองานจัดเลี้ยงต่างๆ ทุกเมนูของเราผลิตจากวัตถุดิบคุณภาพดี เนยพรีเมียม และรสชาติที่ลงตัว พร้อมกับราคาที่ย่อมเยาว์ มีทั้งราคาปลีก และราคาส่ง เพื่อรองรับทุกความต้องการของคุณ " </p>
+                <p class="fw-light custom-fontEG2" style=" font-size: clamp(1.5rem, 5vw, 2rem); color: #AC8662; padding-left: 35px; padding-right: 35px; padding-top: 30px;">" HomPak Homkor is a bakery that brings deliciousness in every bite. 
+                 We specialize in cakes, break snacks, and a variety of desserts. 
+                 Whether you're looking for cakes for cafes or events, we’ve got you covered. All our treats are made with high-quality ingredients, including 
+                 premium butter, and are guaranteed to taste amazing. 
+                 We offer both retail and wholesale prices to cater to all your needs. " </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+<!-- Recommend Menu -->
+<section id="recommend-menu" class="p-5">
+    <h2 class="custom-fontEG menu-title">Recommend Menu</h2>
+    <p class="custom-fontTH menu-subtitle">เมนูแนะนำ</p>
+
+    <div class="menu-container">
+        {% for product in product %}
+        <div class="menu-box">
+            <img src="{{product.image.url}}" alt="Red Velvet Cake">
+            <div class="menu-text">
+                <h3 class="custom-fontEG">{{product.name}}</h3>
+                <p class="custom-fontTH">
+                    {{ product.description }}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</section>

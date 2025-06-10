@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ขนมเค้ก</title>
+    <!-- โหลด Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+        }
+        /* รูปหน้าหลักคาเฟ่ */
+        #imagetext{
+            min-height: 1250px;
+            position: relative;
+            background-image: url({% static 'immage/วอลเปเปอร์.jpg' %});
+            background-size: cover;
+            background-repeat: no-repeat;
+            text-align: center;
+            color: #AC8662;
+        }
+        /* about */
+        #about{
+          min-height: 200px;
+          position: relative;
+          color: #FFFFFF;
+          background-color: #CEB09D;
+          text-align: center;
+        }
+        /* menucake */
+        .custom-rounded {
+            border-radius: 20px !important; /* บังคับให้โค้ง */
+        }
+        .custom-img-rounded {
+            border-top-left-radius: 20px !important;
+            border-top-right-radius: 20px !important;
+        }
+
+      </style>
+</head>
+
+<body>
+
+    <!-- navbar ด้านบน -->
+    {% include 'homesidebar.html' %}
+
+    <!--menucake--> 
+    <section id="menucake">
+        <div class="container py-5">
+            <h2 class="mb-4 fw-bold custom-fontTH" style="color: #AC8662;">ขนมเค้ก (Cake)</h2>
+            <div class="row">
+                {% for item in product_list %}
+                <!-- รายการเค้ก -->
+                 <!-- เครปเค้กชาไทย -->
+                <div class="col-md-3 mb-3">
+                    <div class="card h-90 custom-rounded">
+                        {% if item.image %}
+                        <a href="#">
+                            <img src="{{ item.image.url }}" class="card-img-top custom-img-rounded" alt="{{ item.name }}">
+                        </a>
+                        {% endif %}
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-bold custom-fontTH" style="color: #AC8662;">{{ item.name }}</h5>
+                            <p class="card-text custom-fontTH" style="color: #AC8662;">ราคาเริ่มต้น {{ item.one_pound_price }} บาท </p>
+                            <a href="{% url 'product_detail' item.id %}" class="btn btn-outline fw-bold custom-fontTH" style="color: #AC8662; border-color: #AC8662; ">ดูเพิ่มเติม</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                    <p>ไม่มีสินค้าในระบบ</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!--about-->
+    {% include 'abouts.html' %}
+
+</body>
+</html>

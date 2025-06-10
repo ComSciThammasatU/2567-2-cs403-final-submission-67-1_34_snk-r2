@@ -1,0 +1,12 @@
+﻿ชื่อโครงงานภาษาไทย              เว็บแอปพลิเคชันสำหรับการจัดการคำสั่งซื้อเค้กออนไลน์
+ชื่อโครงงานภาษาอังกฤษ			WEB-APPLICATION FOR MANAGING ONLINE CAKE ORDERS
+
+ABSTRACT
+
+     This project aims to develop an online cake ordering web application for the 
+“Hom Pak Hom Khor” cake shop. Currently, the shop uses paper to write down orders and sends information through the LINE application, which has limitations in terms of convenience and accuracy. This web application is designed to improve order management, reduce mistakes, and make it easier for customers to access information and place orders.
+     The system includes functions to show cake details such as appearance, ingredients that may cause allergies, and price, helping customers feel more confident when making a purchase. It also has daily and monthly sales summary features to help the shop owner monitor performance. In addition, it helps expand the customer base through online channels.
+     The result of developing this web application is improved convenience, accuracy, and competitiveness in the current market, focusing on meeting customer needs and managing the shop more efficiently.
+     
+     Keywords: Web application , Online cake ordering , Order management
+

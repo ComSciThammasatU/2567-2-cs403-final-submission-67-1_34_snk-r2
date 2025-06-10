@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hompakhomkor.com</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+        }
+        /* about */
+        #about{
+          min-height: 200px;
+          position: relative;
+          color: #FFFFFF;
+          background-color: #CEB09D;
+          text-align: center;
+        }
+
+      </style>
+</head>
+
+    <!-- navbar ด้านบน -->
+    {% include 'adminsidebar.html' %}
+
+    <!-- editmenu -->
+    <section id="addmenu">
+        <div class="container-fluid py-5">
+            <div class="mb-4">
+            <button onclick="location.href='{% url 'add_product' %}'" class="btn fw-bold custom-fontTH" style="background-color: white; color: #AC8662; border: none; padding: 10px 20px; border-radius: 15px; font-weight: bold;">
+                + เพิ่มเมนู
+            </button>
+            </div>
+
+        {% if products %}
+        <div class="table-responsive fw-bold custom-fontTH">
+            <table class="table align-middle" style="width: 100%;">
+            <thead>
+                <tr style="background-color: #CEB09D; color: white; font-weight: bold; text-align: center; vertical-align: middle;">
+                <th style="vertical-align: middle;" rowspan="2">ลำดับ</th>
+                <th style="vertical-align: middle;" rowspan="2">ภาพ</th>
+                <th style="vertical-align: middle;" rowspan="2">ชื่อเมนู</th>
+                <th style="vertical-align: middle;" colspan="3">ราคาตามไซส์ (ปอนด์)</th>
+                <th style="vertical-align: middle;" rowspan="2">สถานะ</th>
+                <th style="vertical-align: middle;" rowspan="2">แก้ไข</th>
+                <th style="vertical-align: middle;" rowspan="2">ลบ</th>
+                </tr>
+                <tr style="background-color: #CEB09D; color: white; font-weight: bold; text-align: center;">
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr style="text-align: center; vertical-align: middle; color: #AC8662;">
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px;">
+                        {% endif %}
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.one_pound_price|default:"-" }}</td>
+                    <td>{{ product.two_pound_price|default:"-" }}</td>
+                    <td>{{ product.three_pound_price|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'toggle_available' product.pk %}" style="color: #AC8662; text-decoration: underline; cursor: pointer;">
+                          {% if product.is_available %}
+                            ปิดเมนู(เมนูเปิดอยู่)
+                          {% else %}
+                            เปิดเมนู(เมนูปิดอยู่)
+                          {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_product' product.pk %}" style="color: #AC8662; text-decoration: underline; cursor: pointer;">แก้ไข</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_product' product.pk %}" style="color: #AC8662; text-decoration: underline; cursor: pointer;" onclick="return confirm('ยืนยันการลบ?');">ลบ</a>
+                    </td>
+                </tr>
+                {% endfor %}
+        
+            </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p>ยังไม่มีสินค้าในระบบ</p>
+        {% endif %}
+        </div>
+    </section>
+
+    <!--about-->
+    {% include 'abouts.html' %}
+
+</html>

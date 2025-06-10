@@ -1,0 +1,75 @@
+{% load static %}
+
+<!--navbar1-->
+<nav class="navbar navbar-expand-sm navbar-dark" style="background-color: #CEB09D;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+        <img class="p-3" src="{% static 'immage/โลโก้หอมปากหอมคอ.png' %}" alt="" width="113" height="113">
+      </a>
+      <p class="navbar-brand">
+        <span class="fw-light custom-fontEG " style="font-size: 2rem; padding-left: 43px;">Hompak Homkor</span><br>
+        <span class="fw-light custom-fontEG2 " style="font-size: 1.5rem; padding-left: 60px;">Bakery Homemade</span>
+    </p>
+      <!--menu-->
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+        <li class="nav-item me-2">
+            <li class="nav-item me-2">
+                <span class="navbar-text" style="font-size: 18px;">👋 สวัสดี, {{ user.first_name }}</span>
+              </li>
+      
+              <li class="nav-item">
+                <a href="{% url 'logout' %}" class="nav-link" style="font-size: 18px;">Logout</a>
+              </li>
+        </li>
+        <li class="nav-item me-2" style="color: #FFFFFF;">
+            <p>|</p>
+        </li>
+        <li class="nav-item">
+          <a href="/cart" class="navbar-link position-relative" style="color: #FFFFFF; padding-right: 30px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                 class="bi bi-cart-fill" viewBox="0 0 16 16">
+              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>  
+          </svg>
+          <span id="cart-badge" class="position-absolute bg-danger border border-light rounded-circle"
+          style="width: 10px; height: 10px; top: 0; right: 0; display: none;"></span>
+          </a>
+        </li>
+        {% else %}
+        <li class="nav-item me-2">
+          <a href="#" class="nav-link custom-fontTH"  data-bs-toggle="modal" data-bs-target="#loginModal" style="color: #FFFFFF;font-size: 20px;">Login</a>
+          </li>
+          <li class="nav-item me-2">
+            <a href="#" class="nav-link custom-fontTH" data-bs-toggle="modal" data-bs-target="#registerModal" style="color: #FFFFFF;font-size: 20px;">Register</a>
+          </li>
+  
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+<!-- navbar2 -->
+<nav class="navbar navbar-expand-sm navbar-dark custom-navbar custom-navbarsize" style="background-color: #FFFFFF;">
+    <div class="container-fluid">
+        <!-- menu -->
+        <ul class="navbar-nav d-flex w-100">
+            <li class="nav-item me-3">
+                <a href="/" class="navbar-link" style="color: #AC8662; font-size: 20px; padding-left: 30px;">หน้าแรก</a>
+            </li>
+            <li class="nav-item me-3" style="color: #AC8662; font-size: 20px;">
+                <p>|</p>
+            </li>
+            <li class="nav-item">
+                <a href="/cakes" class="navbar-link" style="color: #AC8662; font-size: 20px;">ขนมเค้ก</a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item ms-auto me-4">
+                <a href="/order_history" class="navbar-link" style="color: #AC8662; font-size: 20px;">คำสั่งซื้อของฉัน</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+{% include 'popupmodal.html' %}
+

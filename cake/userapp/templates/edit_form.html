@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>ฟอร์มแก้ไขสินค้า</title></head>
+<body>
+    <div style="display: flex;">
+        {% include "adminsidebar.html" %}
+        <div style="flex-grow: 1; padding: 20px;">
+            <h2>ฟอร์มแก้ไขสินค้า</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">บันทึก</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

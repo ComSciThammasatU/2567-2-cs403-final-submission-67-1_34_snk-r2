@@ -1,0 +1,138 @@
+{% load static %}
+
+<!-- Popup Review Modal (เวอร์ชันใหม่ตามที่ต้องการ) -->
+<div id="commentModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span onclick="closeCommentModal()" class="close">&times;</span>
+        <h3 class="fw-bold custom-fontTH" style="text-align:center; color: #AC8662;">คะแนน และความคิดเห็นสำหรับสินค้านี้</h3>
+        <hr>
+
+        <div class="inner-card" style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 15px;">
+            <form id="commentForm" method="post" action="{% url 'add_comment' 0 %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" id="commentProductId">
+                
+                <div style="margin-bottom: 15px;">
+                    <strong class="custom-fontTH" style="color: #AC8662;">Ratings :</strong>
+                    <div id="ratingStars" style="font-size: 30px; cursor: pointer;">
+                        {% for i in "12345" %}
+                        <span class="star">☆</span>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" id="ratingInput" value="0">
+                </div>
+
+                <div class="custom-fontTH" style="margin-top: 10px; color: #AC8662;">
+                    <strong>ความคิดเห็น:</strong><br>
+                    <textarea id="comment" name="commenttext" style="width: 100%; height: 80px; border-radius: 10px; padding: 8px; border: 1px solid #ccc;" required></textarea>
+                </div>
+
+                <div class="text-end custom-fontTH" style="margin-top: 15px;">
+                    <button type="submit" style="background: #AC8662; color: white; padding: 8px 20px; border: none; border-radius: 20px; cursor: pointer;">
+                        โพสต์
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- CSS สำหรับ Modal -->
+<style>
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fdf9f2;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 20px;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover, .close:focus {
+    color: black;
+}
+
+.star {
+    color: #ccc;
+    font-size: 30px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.star.selected {
+    color: gold;
+}
+
+textarea {
+    font-size: 14px;
+    margin-top: 10px;
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+function openCommentModal(productId) {
+    document.getElementById("commentProductId").value = productId;
+    document.getElementById("commentForm").action = "/addcomment/" + productId + "/";
+    document.getElementById("commentModal").style.display = "block";
+    document.body.style.overflow = 'hidden';
+    setRating(0);
+}
+
+function closeCommentModal() {
+    document.getElementById("commentModal").style.display = "none";
+    document.body.style.overflow = 'auto';
+}
+
+function setRating(rating) {
+    document.getElementById("ratingInput").value = rating;
+    const stars = document.querySelectorAll("#ratingStars .star");
+    stars.forEach((star, index) => {
+        star.textContent = index < rating ? '★' : '☆';
+        if (index < rating) {
+            star.classList.add("selected");
+        } else {
+            star.classList.remove("selected");
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const stars = document.querySelectorAll("#ratingStars .star");
+    stars.forEach((star, index) => {
+        star.addEventListener("click", function() {
+            setRating(index + 1);
+        });
+    });
+});
+
+window.onclick = function(event) {
+    const modal = document.getElementById("commentModal");
+    if (event.target === modal) {
+        closeCommentModal();
+    }
+};
+</script>

@@ -1,0 +1,409 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า | HomPak HomKor</title>
+
+    <!-- โหลด Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%;
+            height: 48px;
+        }
+
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* กล่องสินค้า */
+        .card {
+            background-color: #fff;
+            border: 1px solid #DBB285;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* ปุ่มแบบกำหนดเอง */
+        .custom-btn {
+            background-color: #AC8662;
+            color: white;
+            border-radius: 8px;
+            border: none;
+        }
+
+        .custom-btn:hover {
+            background-color: #926f52;
+        }
+
+        /* Popup */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 40px 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .popup-btn {
+            flex: 1;
+            background-color: #CEB09D;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-btn:hover {
+            background-color: #AC8662;
+        }
+
+        /* ห้าม scroll ตอนเปิด popup */
+        body.popup-open {
+            overflow: hidden;
+        }
+        #about{
+            min-height: 200px;
+            position: relative;
+            color: #FFFFFF;
+            background-color: #CEB09D;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+{% include 'homesidebar.html' %}
+
+<div class="container py-4">
+
+    {% if cart_items and cart_items|length > 0 %}
+        {% for item in cart_items %}
+        <div class="card p-3">
+            <div class="row g-0 align-items-center">
+                <div class="col-md-3 text-center">
+                    <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}">
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold custom-fontTH" style="color: #AC8662;">{{ item.product.name }} ({{ item.size }} ปอนด์)</h5>
+                        <p class="card-text mb-1 fw-bold custom-fontTH" style="color: #AC8662;">จำนวน: {{ item.quantity }}</p>
+                        {% if item.message %}
+                        <p class="card-text mb-1 fw-bold custom-fontTH" style="color: #AC8662;">ข้อความหน้าเค้ก: "{{ item.message }}"</p>
+                        {% endif %}
+                        <p class="card-text fw-bold custom-fontTH" style="color: #AC8662;">รวม: {{ item.total_price|intcomma }} บาท</p>
+                        <form method="post" action="{% url 'remove_from_cart' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm mt-2 custom-fontTH ">ลบออกจากตะกร้า</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="card p-3 fw-bold custom-fontTH" style="color: #AC8662;">
+            <h4>ยอดรวมทั้งหมด: {{ cart_total|intcomma }} บาท</h4>
+        </div>
+
+        <form method="post" action="{% url 'clear_cart' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger w-100 mb-3">ล้างตะกร้าสินค้า</button>
+        </form>
+
+        <form method="post" action="{% url 'confirm_order' %}" enctype="multipart/form-data" class="card p-4">
+            {% csrf_token %}
+            <h4 class="mb-3" style="color: #AC8662;">ยืนยันคำสั่งซื้อ</h4>
+
+            <div class="mb-3 fw-bold custom-fontTH" style="color: #AC8662;">
+                <label>การจัดส่ง</label>
+                <select name="delivery_method" id="delivery-method" class="form-select" required>
+                    <option value="delivery">บริการจัดส่ง</option>
+                    <option value="pickup">รับเองที่ร้าน</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">วันที่ต้องการรับสินค้า</label>
+                    <input type="date" name="delivery_date" class="form-control"  style="color: #AC8662;" id="delivery-date" required>  
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">ช่วงเวลาที่ต้องการรับสินค้า</label>
+                    <select name="delivery_time" class="form-select custom-fontTH" style="color: #AC8662;" required>
+                        <option value="">เลือกช่วงเวลา</option>
+                        <option value="07.00 - 11.00 น.">07.00 - 11.00 น.</option>
+                        <option value="14.00 - 18.00 น.">14.00 - 18.00 น.</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="delivery-section" class="mb-3">
+                <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">ชื่อสถานที่จัดส่ง หรือบริเวณใกล้เคียง:</label>
+                <textarea name="addressname" class="form-control mb-2" rows="1" required></textarea>
+
+                <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">ตำแหน่งที่อยู่:</label>
+                <textarea name="address" class="form-control fw-bold custom-fontTH mb-2" rows="2" required placeholder="โปรดปักตำแหน่งจากแผนที่"></textarea>
+
+                <div id="map" style="height: 300px; margin-bottom: 20px;"></div>
+            </div>
+
+            <div id="pickup-section" class="form-control custom-fontTH" style="color: #AC8662;">
+                <p><strong>ที่อยู่ร้าน:</strong> ที่อยู่ร้านหอมปากหอมคอ</p>
+                <a href="https://maps.app.goo.gl/dLNkFHuSyGfygvCKA?g_st=afm"
+                target="_blank"
+                class="btn btn-sm btn-outline-primary mt-2">
+                เปิดใน Google Maps</a>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold custom-fontTH" style="color: #AC8662;">แนบสลิปการโอนเงิน:</label>
+                <input type="file" name="slip" class="form-control" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn w-100 custom-fontTH" style="background-color: #AC8662; border-color: #AC8662; color: white;">ยืนยันการสั่งซื้อ</button>
+
+            <p class="text-danger mt-3 fw-bold custom-fontTH " style="color: #ff0000; font-size: 1.5rem;" >
+                ** กรุณาสั่งล่วงหน้าอย่างน้อย 3 วัน<br>
+                ** หากต้องการรับหลังเวลา 18.00 น. จะไม่มีบริการจัดส่ง<br>
+                ลูกค้าสามารถมารับเค้กเองได้ที่หน้าร้านจนกว่าจะถึงเวลาเปิดปิดร้าน
+            </p>
+        </form>
+
+    {% else %}
+        <div class="alert alert-warning text-center fw-bold custom-fontTH ">
+            <h4>ไม่มีสินค้าในตะกร้า</h4>
+            <a href="/cakes" class="btn custom-btn mt-3 fw-bold custom-fontTH ">กลับไปเลือกสินค้า</a>
+        </div>
+    {% endif %}
+
+</div>
+
+<!-- Popup Overlay -->
+<div id="paymentPopup" class="popup-overlay">
+    <div class="popup-content">
+        <div class="icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+                <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1z"/>
+            </svg>
+        </div>
+        <p class="popup-message fw-bold custom-fontTH">กรุณารอตรวจสอบการชำระเงินสักครู่</p>
+        <div class="popup-buttons">
+            <button class="popup-btn fw-bold custom-fontTH" onclick="goHome()">หน้าหลัก</button>
+            <button class="popup-btn fw-bold custom-fontTH" onclick="goToOrders()">คำสั่งซื้อของฉัน</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Overlay */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: none; /* ซ่อนเริ่มต้น */
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    /* Popup Box */
+    .popup-content {
+      background-color: white;
+      padding: 40px 20px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Icon */
+    .icon-container {
+      font-size: 60px;
+      color: #CEB09D;
+      margin-bottom: 20px;
+    }
+    
+    .popup-message {
+      font-size: 18px;
+      color: #AC8662;
+      margin-bottom: 30px;
+    }
+    
+    /* Buttons */
+    .popup-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .popup-btn {
+      flex: 1;
+      background-color: #CEB09D;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .popup-btn:hover {
+      background-color: #AC8662;
+    }
+    /*กันเลื่อนพื้นหลังจ้า*/
+    body.popup-open {
+    overflow: hidden;
+  }
+    </style>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<script>
+    const map = L.map('map').setView([13.7563, 100.5018], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+
+    let marker;
+    map.on('click', function(e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker(e.latlng).addTo(map);
+        }
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('textarea[name="address"]').value = data.display_name;
+            })
+            .catch(error => console.error('Error fetching address:', error));
+    });
+
+    const deliverySelect = document.getElementById("delivery-method");
+    const deliverySection = document.getElementById("delivery-section");
+    const pickupSection = document.getElementById("pickup-section");
+    const addressInput = document.querySelector('textarea[name="address"]');
+    const addressnameInput = document.querySelector('textarea[name="addressname"]');
+
+    function toggleDeliveryOptions() {
+        if (deliverySelect.value === "pickup") {
+            deliverySection.style.display = "none";
+            pickupSection.style.display = "block";
+            addressInput.value = "ที่อยู่ร้านหอมปากหอมคอ";
+            addressnameInput.value = "รับที่ร้าน";
+        } else {
+            deliverySection.style.display = "block";
+            pickupSection.style.display = "none";
+            addressInput.value = "";
+            addressnameInput.value = "";
+        }
+    }
+
+    toggleDeliveryOptions();
+    deliverySelect.addEventListener("change", toggleDeliveryOptions);
+
+    function goHome() {
+        window.location.href = "/";
+    }
+
+    function goToOrders() {
+        window.location.href = "/order_history";
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateInput = document.getElementById("delivery-date");
+        const today = new Date();
+        today.setDate(today.getDate() + 3); 
+
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        const minDate = `${yyyy}-${mm}-${dd}`;
+        dateInput.min = minDate;
+    });
+</script>
+
+{% if request.GET.success == 'true' %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("paymentPopup").style.display = "flex";
+    document.body.classList.add("popup-open");
+
+    // ล้าง query string ออกจาก URL ทันทีหลัง popup โชว์
+    if (window.history.replaceState) {
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+});
+</script>
+{% endif %}
+
+</body>
+</html>

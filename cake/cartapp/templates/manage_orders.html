@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>จัดการคำสั่งซื้อ</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #EFDBBA; }
+        .custom-fontTH { font-family: 'IBM Plex Sans Thai', sans-serif; }
+                /* สีขอบบาร์ */
+                .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* about */
+        #about{
+          min-height: 200px;
+          position: relative;
+          color: #FFFFFF;
+          background-color: #CEB09D;
+          text-align: center;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            background-color: #F9F1E3;
+            margin-top: 20px;
+        }
+        .tab-buttons a {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #B3B3B3;
+            text-align: center;
+            text-decoration: none;
+        }
+        .tab-buttons a.active {
+            color: #AC8662;
+            border-bottom: 3px solid #AC8662;
+        }
+
+        .order-card {
+            background-color: #FFCC5D;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            color: #ffffff;
+        }
+
+        .order-footer {
+            margin-top: 10px;
+            text-align: center;
+            color: #AC8662;
+            font-size: 16px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .link-map {
+            color: #ffffff;
+            font-weight: bold;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .action-link {
+            display: block;
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: bold;
+            margin-top: 5px;
+            text-align: right;
+            cursor: pointer;
+        }
+        @media (max-width: 576px) {
+            .order-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+{% include 'adminsidebar.html' %}
+
+<div class="container py-5 custom-fontTH">
+    <h2 class="mb-4 fw-bold" style="color: #AC8662;">รายการสั่งซื้อ</h2>
+
+    <div class="tab-buttons">
+        <a href="{% url 'manage_orders' %}?status=pending" class="{% if status_tab == 'pending' %}active{% endif %}">รอชำระเงิน</a>
+        <a href="{% url 'manage_orders' %}?status=paid" class="{% if status_tab == 'paid' %}active{% endif %}">ชำระเงินสำเร็จ</a>
+        <a href="{% url 'manage_orders' %}?status=shipped" class="{% if status_tab == 'shipped' %}active{% endif %}">จัดส่งสำเร็จ</a>
+    </div>
+
+    {% if orders %}
+        {% for order in orders %}
+            {% if order.status != 'cancelled' %}
+            <div class="order-card">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div>วันที่: {{ order.created_at|date:"d/m/Y H:i" }}</div>
+                        <div>เลขออเดอร์: {{ order.id }}</div>
+                        <div>ผู้สั่ง: {{ order.user.first_name }} {{ order.user.last_name }}</div>
+                        <div>เบอร์: {{ order.user.phone }}</div>
+                        <div>วิธีรับ: {% if order.delivery_method == "delivery" %}บริการจัดส่ง{% elif order.delivery_method == "pickup" %}รับที่ร้าน{% else %}-{% endif %}</div>
+                        <div>วันที่ต้องการรับสินค้า: {{ order.delivery_date }}</div>
+                        <div>ช่วงเวลารับสินค้า: {{ order.delivery_time }}</div>
+                        <div>สถานที่จัดส่ง: {{ order.addressname|default:"-" }}
+                            {% if order.address %}
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ order.address|urlencode }}" target="_blank" class="link-map">เปิดลิงก์กูเกิลแมพ</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div>ลำดับที่ {{ forloop.counter }}</div>
+                        <div>สถานะ: 
+                            {% if order.status == 'pending' %}รอชำระเงิน
+                            {% elif order.status == 'paid' %}ชำระเงินสำเร็จ
+                            {% elif order.status == 'shipped' %}จัดส่งสำเร็จ
+                            {% endif %}
+                        </div>
+                        {% if status_tab == 'pending' %}
+                            <form id="confirm-form-{{ order.id }}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_id" value="{{ order.id }}">
+                                <input type="hidden" name="action" value="confirm_payment">
+                                <button type="button" class="action-link btn btn-link p-0" onclick="confirmPayment({{ order.id }})">ยืนยันการชำระเงิน</button>
+                            </form>
+                            <button class="action-link btn btn-link p-0" onclick="toggleCancelForm({{ order.id }})">ยกเลิกออเดอร์</button>
+                            <div id="cancel-form-{{ order.id }}" style="display:none;">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                                    <input type="hidden" name="action" value="cancel_order">
+                                    <textarea name="cancel_reason" rows="2" class="form-control mt-2" placeholder="กรอกสาเหตุ" required></textarea><br>
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="cancelOrder({{ order.id }})">ยืนยันการยกเลิก</button>
+                                </form>
+                            </div>
+                        {% elif status_tab == 'paid' %}
+                            <form id="confirm-form-shipping-{{ order.id }}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_id" value="{{ order.id }}">
+                                <input type="hidden" name="action" value="confirm_shipping">
+                                <button type="button" class="action-link btn btn-link p-0" onclick="confirmShipping({{ order.id }})">จบออเดอร์</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- รายละเอียดรายการสินค้า -->
+            <div style="background-color: #fff7ee; border-radius: 8px; padding: 20px; margin-top: 0; font-size: 16px;">
+                <div style="display: flex; font-weight: bold; border-bottom: 1px solid #AC8662; padding: 10px 0; color: #AC8662;">
+                    <div style="flex: 1;">สินค้า</div>
+                    <div style="flex: 3;">รายการ</div>
+                    <div style="flex: 1; text-align: center;">จำนวน</div>
+                    <div style="flex: 1; text-align: center;">ราคา</div>
+                </div>
+
+                {% for item in order.orderitem_set.all %}
+                <div style="display: flex; padding: 15px 0; border-bottom: 1px solid #eee; align-items: flex-start;">
+                    <div style="flex: 1;">{{ forloop.counter }}</div>
+                    <div style="flex: 3; text-align: left;">
+                        {{ item.product.name }}<br>
+                        <small>ข้อความบนหน้าเค้ก: {{ item.message|default:"-" }}<br>ขนาด (ปอนด์): {{ item.size }}</small>
+                    </div>
+                    <div style="flex: 1; text-align: center;">{{ item.quantity }}</div>
+                    <div style="flex: 1; text-align: center;">{{ item.total_price|floatformat:0 }}</div>
+                </div>
+                {% endfor %}
+
+                <div style="display: flex; font-weight: bold; padding: 15px 0;">
+                    <div style="flex: 1;"></div>
+                    <div style="flex: 3;"></div>
+                    <div style="flex: 1; text-align: center;">รวมทั้งหมด</div>
+                    <div style="flex: 1; text-align: center;">{{ order.total_price|floatformat:0 }} บ.</div>
+                </div>
+
+                {% if order.slip %}
+                <div class="order-footer">
+                    <a href="{{ order.slip.url }}" target="_blank">กดเพื่อดูสลิปโอนเงิน</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5 text-muted">ไม่มีคำสั่งซื้อในสถานะนี้</div>
+    {% endif %}
+</div>
+
+<script>
+function toggleCancelForm(orderId) {
+    const form = document.getElementById(`cancel-form-${orderId}`);
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+function cancelOrder(orderId) {
+    if (confirm('คุณต้องการยกเลิกออเดอร์นี้ใช่หรือไม่?')) {
+        document.getElementById(`cancel-form-${orderId}`).submit();
+    }
+}
+function confirmPayment(orderId) {
+    if (confirm('คุณต้องการยืนยันการชำระเงินใช่หรือไม่?')) {
+        document.getElementById(`confirm-form-${orderId}`).submit();
+    }
+}
+function confirmShipping(orderId) {
+    if (confirm('คุณต้องการจบออเดอร์นี้ใช่หรือไม่?')) {
+        document.getElementById(`confirm-form-shipping-${orderId}`).submit();
+    }
+}
+</script>
+
+</body>
+</html>

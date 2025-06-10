@@ -1,0 +1,134 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin dashboard</title>
+
+    <!-- โหลด Bootstrap -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+    <style>
+        /* ฟ้อนท์ */
+        .custom-fontEG {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        .custom-fontEG2 {
+            font-family: 'Sansation Light', sans-serif;
+        }
+        .custom-fontTH {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+        }
+
+        /* สีขอบบาร์ */
+        .custom-navbar {
+            border: 2px solid #DBB285;
+        }
+        /* ขนาดบาร์ */
+        .custom-navbarsize {
+            width: 100%; /* ความกว้างเต็มจอ */
+            height: 48px; /* ความสูง 80px */
+        }
+        /* สีพื้นหลัง */
+        body {
+            background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+        }
+        /* รูปหน้าหลักคาเฟ่ */
+        #imagetext{
+            min-height: 1250px;
+            position: relative;
+            background-image: url({% static 'immage/วอลเปเปอร์.jpg' %});
+            background-size: cover;
+            background-repeat: no-repeat;
+            text-align: center;
+            color: #AC8662;
+        }
+
+        /*Recommend Menu*/
+        /* เมนูแนะนำEG */
+        .menu-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #AC8662;
+            font-weight: light;
+        }
+        /* เมนูแนะนำTH */
+        .menu-subtitle {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #FFFFFF;
+            margin-bottom: 30px;
+        }
+        /* กล่องเมนูทั้งหมด */
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        /* กล่องแต่ละเมนู */
+        .menu-box {
+            display: flex;
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        /* ภาพเค้ก */
+        .menu-box img {
+            width: 40%;
+            object-fit: cover;
+        }
+        /* ส่วนอธิบายเค้ก */
+        .menu-text {
+          padding: 20px; /* เพิ่มระยะห่างขอบด้านใน */
+          flex: 1; /* ให้ข้อความขยายเต็มพื้นที่ที่เหลือจากรูปภาพ */
+          display: flex; /* ใช้ Flexbox */
+          flex-direction: column; /* จัดให้อยู่ในแนวตั้ง */
+          align-items: center; /* จัดให้อยู่ตรงกลาง */
+          justify-content: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+          text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
+        }
+        /* ชื่อเค้ก */
+        .menu-text h3 {
+            font-size: 1.8rem;
+            color: #AC8662;
+            margin-bottom: 10px;
+        }
+        /* อธิบายเค้ก */
+        .menu-text p {
+            font-size: 1rem;
+            color: #DBB285;
+            line-height: 1.5;
+        }
+
+        /* about */
+        #about{
+          min-height: 200px;
+          position: relative;
+          color: #FFFFFF;
+          background-color: #CEB09D;
+          text-align: center;
+        }
+
+      </style>
+</head>
+
+<body style="background-color: #EFDBBA;"> <!-- สีพื้นหลังจาก afterlogin.html -->
+
+    <!-- navbar ด้านบน -->
+    {% include 'adminsidebar.html' %}
+
+    <!-- เนื้อหา -->
+    {% include 'hitproduct.html' %}
+
+    <!--about-->
+    {% include 'abouts.html' %}
+
+
+</body>
+</html>

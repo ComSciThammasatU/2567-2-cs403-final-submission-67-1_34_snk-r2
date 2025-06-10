@@ -1,0 +1,262 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="th">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hompakhomkor.com</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300&display=swap" rel="stylesheet">
+  <style>
+      /* ฟ้อนท์ */
+      .custom-fontEG {
+          font-family: 'Tilt Neon', sans-serif;
+      }
+      .custom-fontEG2 {
+          font-family: 'Sansation Light', sans-serif;
+      }
+      .custom-fontTH {
+          font-family: 'IBM Plex Sans Thai', sans-serif;
+      }
+
+      /* สีขอบบาร์ */
+      .custom-navbar {
+          border: 2px solid #DBB285;
+      }
+      /* ขนาดบาร์ */
+      .custom-navbarsize {
+          width: 100%; /* ความกว้างเต็มจอ */
+          height: 48px; /* ความสูง 80px */
+      }
+      /* สีพื้นหลัง */
+      body {
+          background-color: #EFDBBA;  /* ใช้สีพื้นหลังเป็น #EFDBBA */
+      }
+      /* about */
+      #about{
+        min-height: 200px;
+        position: relative;
+        color: #FFFFFF;
+        background-color: #CEB09D;
+        text-align: center;
+      }
+      .chart-container {
+          background: white;
+          padding: 30px;
+          border-radius: 12px;
+          position: relative;
+          width: 100%;
+          height: 100%;
+      }
+      .legend-box {
+          text-align: center;
+          margin-top: 10px;
+      }
+      .legend-box label {
+          margin: 0 10px;
+          font-size: 14px;
+      }
+
+    </style>
+</head>
+<body>
+
+  <!-- navbar ด้านบน -->
+  {% include 'adminsidebar.html' %}
+
+  <!-- summary -->
+  <section id="summary">
+      <style>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          .summary-box {
+              background-color: #CEB09D; /* สีพื้นแถบยอดขาย */
+              color: #ffffff;
+              padding: 20px;
+              border-radius: 8px;
+              text-align: center;
+          }
+          .graph-box {
+              background-color: white;
+              height: 700px;
+              border-radius: 8px;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-top: 30px;
+          }
+          .chart-container {
+              background: white;
+              padding: 30px;
+              border-radius: 12px;
+              position: relative;
+              width: 100%;
+              height: 100%;
+          }
+          .legend-box {
+              text-align: center;
+              margin-top: 10px;
+          }
+          .legend-box label {
+              margin: 0 10px;
+              font-size: 14px;
+          }
+        </style>
+      
+          <div class="container py-5">
+          <h2 class="mb-4 fw-bold custom-fontTH" style="color: #AC8662;">สรุปยอดการขาย</h2>
+        
+            <!-- แถบแสดงยอด -->
+            <div class="row g-4 custom-fontTH">
+              <div class="col-12 col-md-4">
+                  <div class="summary-box d-flex flex-column justify-content-center align-items-center" style="background-color: #CEB09D; color: #FFFFFF; padding: 30px; border-radius: 8px; min-height: 150px;">
+                      <div class="mb-2" style="font-size: 18px;">ยอดขายวันนี้ (บาท)</div>
+                      <div style="font-size: 32px; font-weight: bold;">{{ total_today|floatformat:0 }}</div>
+                  </div>
+              </div>
+              <div class="col-12 col-md-4">
+                  <div class="summary-box d-flex flex-column justify-content-center align-items-center" style="background-color: #CEB09D; color: #FFFFFF; padding: 30px; border-radius: 8px; min-height: 150px;">
+                      <div class="mb-2" style="font-size: 18px;">ยอดขายเมื่อวาน (บาท)</div>
+                      <div style="font-size: 32px; font-weight: bold;">{{ total_yesterday|floatformat:0 }}</div>
+                  </div>
+              </div>
+              <div class="col-12 col-md-4">
+                  <div class="summary-box d-flex flex-column justify-content-center align-items-center" style="background-color: #CEB09D; color: #FFFFFF; padding: 30px; border-radius: 8px; min-height: 150px;">
+                      <div class="mb-2" style="font-size: 18px;">ยอดขายเดือนนี้ (บาท)</div>
+                      <div style="font-size: 32px; font-weight: bold;">{{ total_month|floatformat:0 }}</div>
+                  </div>
+              </div>
+            </div>
+        
+          <!-- กล่องกราฟ -->
+          <div class="graph-box" >
+            <div class="chart-container">
+              <canvas id="salesChart"></canvas>
+              <div class="legend-box" id="legendBox"></div>
+          </div>
+          </div>
+        </div>
+  </section>
+
+  <!--about-->
+  {% include 'abouts.html' %}
+  
+<script>
+let chart;
+let allData = {};
+const ctx = document.getElementById('salesChart').getContext('2d');
+
+function fetchDataAndPlot() {
+  fetch('/api/admin_dashboard/sales/monthly/')
+    .then(res => res.json())
+    .then(data => {
+      // เก็บแค่ 3 ปีล่าสุด
+      const sortedYears = Object.keys(data).sort((a, b) => b - a);
+      const latest3 = sortedYears.slice(0, 3);
+
+      allData = {};
+      latest3.forEach(year => {
+        allData[year] = data[year];
+      });
+
+      updateLegend();
+      updateChart();
+    });
+}
+function updateLegend() {
+  const box = document.getElementById('legendBox');
+  box.innerHTML = '';
+
+  const colorList = ['#8888ee', '#44cc44', '#dd66cc'];
+
+  // อ้างอิงลำดับปีแบบใหม่ (fix สี)
+  const colorReference = Object.keys(allData).sort((a, b) => b - a);
+  const colorMap = colorReference.reduce((acc, year, i) => {
+    acc[year] = colorList[i % colorList.length];
+    return acc;
+  }, {});
+
+  // render checkbox เรียงเก่า → ใหม่
+  const sortedYears = Object.keys(allData).sort((a, b) => a - b);
+  sortedYears.forEach((year) => {
+    const color = colorMap[year];
+    const id = `year-${year}`;
+
+    box.innerHTML += `
+      <label style="margin: 0 10px; display: inline-flex; align-items: center;">
+        <input type="checkbox" id="${id}" checked onchange="updateChart()" value="${year}">
+        <span style="display: inline-block; width: 12px; height: 12px; background-color: ${color}; margin-left: 6px; border: 1px solid #ccc;"></span>
+        <span style="margin-left: 6px;">ปี ${year}</span>
+      </label>
+    `;
+  });
+}
+
+function updateChart() {
+  const selectedYears = [...document.querySelectorAll('#legendBox input:checked')].map(i => i.value).sort((a, b) => a - b);
+
+  const sortedYears = Object.keys(allData).sort((a, b) => b - a); // ปีล่าสุดก่อน
+  const colorMap = sortedYears.reduce((acc, year, i) => {
+    acc[year] = ['#8888ee', '#44cc44', '#dd66cc'][i % 3];
+    return acc;
+  }, {});
+
+  const datasets = selectedYears.map((year) => ({
+    label: `ปี ${year}`,
+    data: allData[year],
+    backgroundColor: colorMap[year],   
+    borderColor: colorMap[year],      
+    borderWidth: 1
+  }));
+
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+      legend: { display: false },
+      title: {
+          display: true,
+          text: 'รายได้ (บาท)',
+          font: { size: 16 }
+        },
+        tooltip: {
+          displayColors: false,
+          callbacks: {
+        label: function(context) {
+        const year = context.dataset.label.replace('ปี ', '');
+        const value = context.formattedValue;
+        return `ปี ${year} : ยอดขาย ${value} บาท`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: false
+        },
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+fetchDataAndPlot();
+</script>
+
+
+</body>
+
+</html>
