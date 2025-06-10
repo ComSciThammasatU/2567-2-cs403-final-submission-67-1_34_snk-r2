@@ -62,6 +62,8 @@ python main.py
 
 ##  การใช้งาน Django Web App
 
+ในส่วนของ .env ให้ใส่ตัว api key ของบริการ Thaibulksms เพื่อทำการส่ง sms
+
 ### สำหรับสร้าง superuser:
 
 ```
