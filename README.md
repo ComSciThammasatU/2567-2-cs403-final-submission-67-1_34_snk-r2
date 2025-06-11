@@ -62,6 +62,8 @@ python main.py
 
 ##  การใช้งาน Django Web App
 
+เริ่มจากการ ไปที่ /cake ที่เป็นส่วนของ django
+กรณีต้องการใช้ระบบ otp
 ในส่วนของ .env ให้ใส่ตัว api key ของบริการ Thaibulksms เพื่อทำการส่ง sms
 
 ### สำหรับสร้าง superuser:
