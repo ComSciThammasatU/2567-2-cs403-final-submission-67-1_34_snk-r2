@@ -34,7 +34,7 @@ Manual / Instructions for your projects starts here !
 ติดตั้งด้วยคำสั่ง:
 
 ```
-pip install Django python-dotenv Pillow tensorflow numpy pythainlp fastapi uvicorn pydantic requests
+pip install Django python-dotenv Pillow tensorflow numpy pythainlp fastapi uvicorn pydantic requests pandas
 ```
 
 ---
@@ -50,6 +50,7 @@ senti/how2deploy-master/finished/model/weight/tokenizer.pickle
 
 จำเป็นต้องเข้าไปแก้ไข path ให้ตรงกับตำแหน่งที่เก็บไฟล์จริงในเครื่อง โดยแก้ที่ไฟล์:  
 `senti/how2deploy-master/finished/model.py`
+หลังแ
 
 เมื่อแก้ path เรียบร้อยแล้ว ให้รันไฟล์ `main.py` เพื่อเริ่มต้นเซิร์ฟเวอร์ของ sentiment API:
 
