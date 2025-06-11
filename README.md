@@ -67,6 +67,7 @@ python main.py
 ### สำหรับสร้าง superuser:
 
 ```
+ให้ cd ไปที่ cake แล้วสามารถพิมพ์คำสั่ง
 python manage.py createsuperuser
 ใช้เพื่อสร้างผู้ดูแลระบบของเว็บแอปพลิเคชั่น (แม่ค้า)
 ```
