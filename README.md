@@ -50,7 +50,7 @@ senti/how2deploy-master/finished/model/weight/tokenizer.pickle
 
 จำเป็นต้องเข้าไปแก้ไข path ให้ตรงกับตำแหน่งที่เก็บไฟล์จริงในเครื่อง โดยแก้ที่ไฟล์:  
 `senti/how2deploy-master/finished/model.py`
-หลังแ
+หลังแก้ path ที่อยู่ไฟล์แล้วให้ รัน model.py
 
 เมื่อแก้ path เรียบร้อยแล้ว ให้รันไฟล์ `main.py` เพื่อเริ่มต้นเซิร์ฟเวอร์ของ sentiment API:
 
