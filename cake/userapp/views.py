@@ -314,7 +314,7 @@ def verify_otp(request):
 
             login(request, user)
 
-            # session เอาไว้เก็บข้อมูล
+         
             for key in ['first_name', 'last_name', 'phone', 'password', 'otp_code']:
                 if key in request.session:
                     del request.session[key]
