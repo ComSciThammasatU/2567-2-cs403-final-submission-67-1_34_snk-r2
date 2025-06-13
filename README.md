@@ -91,7 +91,7 @@ python manage.py runserver
 
 ##  หมายเหตุ
 
-- Django และ FastAPI แยกกันรัน
+- Django และ Sentiment model แยกกันรัน
 - ให้รันทั้ง `cake/` และ `senti/how2deploy-master/finished/model.py`
 - ตรวจสอบให้แน่ใจว่า path ของโมเดลใน `senti/how2deploy-master/finished/model.py` ถูกต้อง
 
