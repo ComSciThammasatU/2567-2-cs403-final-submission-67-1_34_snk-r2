@@ -55,7 +55,7 @@ senti/how2deploy-master/finished/model/weight/tokenizer.pickle
 `senti/how2deploy-master/finished/model.py`
 หลังแก้ path ที่อยู่ไฟล์แล้วให้ รัน model.py
 
-เมื่อแก้ path เรียบร้อยแล้ว ให้รันไฟล์ `main.py` เพื่อเริ่มต้นเซิร์ฟเวอร์ของ sentiment API:
+เมื่อแก้ path และรัน model.py เรียบร้อยแล้ว ให้รันไฟล์ `main.py` เพื่อเริ่มต้นเซิร์ฟเวอร์ของ sentiment API:
 
 ```
 cd senti/how2deploy-master/finished
